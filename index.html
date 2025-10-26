@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MGIS Create Enhanced System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --primary-dark: #0d47a1;
+            --secondary: #4285f4;
+            --accent: #f39c12;
+            --light: #ffffff;
+            --dark: #202124;
+            --gray: #f8f9fa;
+            --gray-dark: #dadce0;
+            --success: #34a853;
+            --warning: #fbbc05;
+            --error: #ea4335;
+            --bitcoinayt: #ff9900;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ffffff 0%, #e3f2fd 100%);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border-left: 5px solid var(--primary);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--primary-dark);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .balance-container {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .balance {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .menu-item {
+            background: var(--light);
+            border-radius: 10px;
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--gray-dark);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        .menu-item i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .menu-item h3 {
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .menu-item p {
+            color: var(--dark);
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            flex-grow: 1;
+        }
+        
+        .cost {
+            color: var(--bitcoinayt);
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--gray-dark);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            overflow: auto;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: var(--light);
+            margin: 5% auto;
+            padding: 25px;
+            border-radius: 12px;
+            width: 80%;
+            max-width: 700px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        
+        .close-btn {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close-btn:hover {
+            color: var(--primary);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--primary-dark);
+            font-weight: 500;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--gray-dark);
+            background-color: var(--light);
+            color: var(--dark);
+            font-size: 1rem;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+        }
+        
+        button {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .activity-log {
+            background: var(--light);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            max-height: 300px;
+            overflow-y: auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .activity-log h3 {
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--gray);
+        }
+        
+        .log-entry {
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--gray);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+        
+        .log-entry i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+        
+        .success {
+            color: var(--success);
+        }
+        
+        .error {
+            color: var(--error);
+        }
+        
+        .bitcoinayt {
+            color: var(--bitcoinayt);
+        }
+        
+        .social-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: var(--light);
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            min-width: 120px;
+        }
+        
+        .stat-item i {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-dark);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+        
+        @media (max-width: 768px) {
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+                padding: 20px 15px;
+            }
+            
+            .social-stats {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .stat-item {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+        
+        .tab-container {
+            margin-top: 20px;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--gray);
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            background: var(--gray);
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+            font-weight: 500;
+        }
+        
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background: var(--light);
+            border-radius: 0 0 5px 5px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .post {
+            border: 1px solid var(--gray-dark);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: var(--light);
+        }
+        
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .post-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .post-user {
+            font-weight: bold;
+            color: var(--primary-dark);
+        }
+        
+        .post-time {
+            font-size: 0.8rem;
+            color: #777;
+            margin-left: auto;
+        }
+        
+        .post-actions {
+            display: flex;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--gray);
+        }
+        
+        .post-action {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+            color: #777;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        
+        .post-action:hover {
+            color: var(--primary);
+        }
+        
+        .post-action i {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>MGIS CREATE ENHANCED SYSTEM</h1>
+            <div class="subtitle">Powered by Gomadza 7-Expression Brain Language & Bitcoinayt Cryptocurrency</div>
+            
+            <div class="balance-container">
+                <div>Your Bitcoinayt Balance:</div>
+                <div class="balance" id="balance">500₿</div>
+            </div>
+        </header>
+        
+        <div class="social-stats">
+            <div class="stat-item">
+                <i class="fas fa-users"></i>
+                <div class="stat-value" id="connections">0</div>
+                <div class="stat-label">Connections</div>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-heart"></i>
+                <div class="stat-value" id="matches">0</div>
+                <div class="stat-label">Matches</div>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-comment"></i>
+                <div class="stat-value" id="posts">0</div>
+                <div class="stat-label">Posts</div>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-thumbs-up"></i>
+                <div class="stat-value" id="likes">0</div>
+                <div class="stat-label">Likes</div>
+            </div>
+        </div>
+        
+        <div class="menu-grid">
+            <div class="menu-item" onclick="openModal('messageModal')">
+                <i class="fas fa-envelope"></i>
+                <h3>Send Message</h3>
+                <p>Send enhanced messages using neural processing and 7-expression conversion</p>
+                <div class="cost">Cost: 5-50₿ depending on type</div>
+            </div>
+            
+            <div class="menu-item" onclick="openModal('userModal')">
+                <i class="fas fa-user-plus"></i>
+                <h3>Add User</h3>
+                <p>Add new users with neural capabilities to the system</p>
+                <div class="cost">Cost: 10₿</div>
+            </div>
+            
+            <div class="menu-item" onclick="openModal('flightModal')">
+                <i class="fas fa-plane"></i>
+                <h3>Flight Management</h3>
+                <p>Schedule neural flights between users with message transmission</p>
+                <div class="cost">Cost: 50-100₿</div>
+            </div>
+            
+            <div class="menu-item" onclick="openModal('giftModal')">
+                <i class="fas fa-gift"></i>
+                <h3>Gift Shop</h3>
+                <p>Purchase gifts and neural enhancement tools</p>
+                <div class="cost">Various prices</div>
+            </div>
+            
+            <div class="menu-item" onclick="openModal('neuralModal')">
+                <i class="fas fa-brain"></i>
+                <h3>Gomadza Neural Interface</h3>
+                <p>Access advanced neural processing and brain language conversion</p>
+                <div class="cost">Cost: 50-200₿</div>
+            </div>
+            
+            <div class="menu-item" onclick="openModal('socialModal')">
+                <i class="fas fa-chart-line"></i>
+                <h3>Social Dashboard</h3>
+                <p>Manage your social connections and activities</p>
+                <div class="cost">Cost: 5-50₿</div>
+            </div>
+            
+            <div class="menu-item" onclick="openModal('mgiscreModal')">
+                <i class="fab fa-twitter"></i>
+                <h3>MGISCRE Feed</h3>
+                <p>Post and interact with messages in the MGISCRE network</p>
+                <div class="cost">Cost: 15₿ per post</div>
+            </div>
+            
+            <div class="menu-item" onclick="openModal('datingModal')">
+                <i class="fas fa-heart"></i>
+                <h3>Love Dating App</h3>
+                <p>Find neural-compatible matches in the MGIS network</p>
+                <div class="cost">Cost: 15-50₿</div>
+            </div>
+            
+            <div class="menu-item" onclick="openModal('agtModal')">
+                <i class="fas fa-dna"></i>
+                <h3>AGT Enrollment</h3>
+                <p>Enroll in the Advanced Genetic Training program</p>
+                <div class="cost">Cost: Varies</div>
+            </div>
+        </div>
+        
+        <div class="activity-log">
+            <h3>Activity Log</h3>
+            <div id="logEntries">
+                <div class="log-entry"><i class="fas fa-info-circle"></i> [12:30:45] MGIS Create Enhanced System initialized with Gomadza 7-Expression Brain Language</div>
+                <div class="log-entry"><i class="fas fa-bolt"></i> [12:30:46] BITCOINAYT NETWORK ACTIVE</div>
+                <div class="log-entry"><i class="fas fa-gift"></i> [12:30:47] Welcome bonus: +500₿ added to your balance!</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Message Modal -->
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('messageModal')">&times;</span>
+            <h2>Send Enhanced Message</h2>
+            
+            <div class="form-group">
+                <label for="messageType">Message Type:</label>
+                <select id="messageType">
+                    <option value="1">Standard Message (5₿)</option>
+                    <option value="2">Neural Transmission (25₿)</option>
+                    <option value="3">Gomadza 7-Expression (50₿)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="messageContent">Message Content:</label>
+                <textarea id="messageContent" rows="4" placeholder="Enter your message"></textarea>
+            </div>
+            
+            <button onclick="sendMessage()">Send Message</button>
+        </div>
+    </div>
+    
+    <!-- User Modal -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('userModal')">&times;</span>
+            <h2>Add New User</h2>
+            
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" placeholder="Enter username">
+            </div>
+            
+            <div class="form-group">
+                <label for="neuralId">Neural ID (optional):</label>
+                <input type="text" id="neuralId" placeholder="Enter neural ID">
+            </div>
+            
+            <div class="form-group">
+                <label for="specialization">Specialization:</label>
+                <input type="text" id="specialization" placeholder="Enter specialization">
+            </div>
+            
+            <button onclick="addUser()">Add User</button>
+        </div>
+    </div>
+    
+    <!-- Flight Modal -->
+    <div id="flightModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('flightModal')">&times;</span>
+            <h2>Schedule Neural Flight</h2>
+            
+            <div class="form-group">
+                <label for="flightType">Flight Type:</label>
+                <select id="flightType">
+                    <option value="1">Neural Flight (50₿)</option>
+                    <option value="2">Premium Flight (100₿)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="fromUser">Departure User:</label>
+                <input type="text" id="fromUser" placeholder="Enter departure user">
+            </div>
+            
+            <div class="form-group">
+                <label for="toUser">Arrival User:</label>
+                <input type="text" id="toUser" placeholder="Enter arrival user">
+            </div>
+            
+            <div class="form-group">
+                <label for="flightMessage">Neural Message:</label>
+                <textarea id="flightMessage" rows="4" placeholder="Enter message"></textarea>
+            </div>
+            
+            <button onclick="scheduleFlight()">Schedule Flight</button>
+        </div>
+    </div>
+    
+    <!-- MGISCRE Modal -->
+    <div id="mgiscreModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('mgiscreModal')">&times;</span>
+            <h2>MGISCRE Social Network</h2>
+            
+            <div class="tab-container">
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('mgiscrePostTab')">Post</div>
+                    <div class="tab" onclick="switchTab('mgiscreFeedTab')">Feed</div>
+                    <div class="tab" onclick="switchTab('mgiscreNetworkTab')">Network</div>
+                </div>
+                
+                <div id="mgiscrePostTab" class="tab-content active">
+                    <div class="form-group">
+                        <label for="mgiscrePost">What's happening in the MGISCRE network?</label>
+                        <textarea id="mgiscrePost" rows="4" placeholder="Share your thoughts (280 characters max)"></textarea>
+                    </div>
+                    <button onclick="postToMgiscre()">Post to MGISCRE (15₿)</button>
+                </div>
+                
+                <div id="mgiscreFeedTab" class="tab-content">
+                    <div class="post">
+                        <div class="post-header">
+                            <div class="post-avatar">MG</div>
+                            <div class="post-user">@MGISAdmin</div>
+                            <div class="post-time">2 hours ago</div>
+                        </div>
+                        <div class="post-content">
+                            Welcome to the MGISCRE neural communication network! Experience the future of human-machine interaction. #BrainToTech #Gomadza7Expression
+                        </div>
+                        <div class="post-actions">
+                            <div class="post-action"><i class="fas fa-heart"></i> 42</div>
+                            <div class="post-action"><i class="fas fa-retweet"></i> 12</div>
+                            <div class="post-action"><i class="fas fa-comment"></i> 8</div>
+                        </div>
+                    </div>
+                    
+                    <div id="mgiscrePosts">
+                        <!-- User posts will appear here -->
+                    </div>
+                </div>
+                
+                <div id="mgiscreNetworkTab" class="tab-content">
+                    <h3>MGISCRE Network Stats</h3>
+                    <div class="social-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-users"></i>
+                            <div class="stat-value">1,347</div>
+                            <div class="stat-label">Connected Users</div>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-brain"></i>
+                            <div class="stat-value">942</div>
+                            <div class="stat-label">Neural Links</div>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-coins"></i>
+                            <div class="stat-value">6,433₿</div>
+                            <div class="stat-label">Daily Transactions</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin-top: 20px;">
+                        <button onclick="joinNetwork()">Join Network (100₿)</button>
+                        <button onclick="createNode()" style="margin-left: 10px;">Create Node (500₿)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let bitcoinaytBalance = 500.0;
+        let messages = [];
+        let users = {};
+        let flights = [];
+        let mgiscrePosts = [];
+        let activityLog = [];
+        let socialStats = {
+            connections: 0,
+            matches: 0,
+            posts: 0,
+            likes: 0
+        };
+        
+        // Initialize the system
+        function initSystem() {
+            logActivity("MGIS Create Enhanced System initialized with Gomadza 7-Expression Brain Language");
+            logActivity("BITCOINAYT NETWORK ACTIVE");
+            logActivity("Welcome bonus: +500₿ added to your balance!");
+            updateBalanceDisplay();
+            updateSocialStats();
+            
+            // Simulate some initial activity
+            setTimeout(() => {
+                logActivity("Neural network synchronization complete");
+                logActivity("Gomadza 7-Expression language processor activated");
+            }, 1500);
+        }
+        
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        // Tab switching function
+        function switchTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Deactivate all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Activate selected tab and content
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // Message functions
+        function sendMessage() {
+            const type = parseInt(document.getElementById('messageType').value);
+            const content = document.getElementById('messageContent').value;
+            
+            if (!content) {
+                alert("Please enter a message");
+                return;
+            }
+            
+            const cost = type === 1 ? 5 : type === 2 ? 25 : 50;
+            
+            if (deductFromBalance(cost)) {
+                let processedMessage = processEnhancedMessage(content, type);
+                messages.push(processedMessage);
+                logActivity(`Message sent via enhanced system - Type: ${type}`);
+                alert("Message sent: " + processedMessage);
+                closeModal('messageModal');
+            }
+        }
+        
+        function processEnhancedMessage(msg, type) {
+            switch (type) {
+                case 1:
+                    return "Standard: " + msg;
+                case 2:
+                    return "Neural: " + brainToLanguageConverter(msg);
+                case 3:
+                    return "Gomadza-7: " + sevenExpressionConverter(msg);
+                default:
+                    return "Processed: " + msg;
+            }
+        }
+        
+        // User functions
+        function addUser() {
+            const username = document.getElementById('username').value;
+            const neuralId = document.getElementById('neuralId').value;
+            const specialization = document.getElementById('specialization').value;
+            
+            if (!username) {
+                alert("Please enter a username");
+                return;
+            }
+            
+            if (users[username]) {
+                alert("User already exists");
+                return;
+            }
+            
+            if (deductFromBalance(10)) {
+                users[username] = {
+                    neuralId: neuralId,
+                    specialization: specialization,
+                    joinDate: new Date()
+                };
+                
+                socialStats.connections++;
+                updateSocialStats();
+                
+                logActivity(`User added: ${username} with neural capabilities`);
+                alert("User added successfully! Neural profile created.");
+                closeModal('userModal');
+            }
+        }
+        
+        // Flight functions
+        function scheduleFlight() {
+            const type = parseInt(document.getElementById('flightType').value);
+            const fromUser = document.getElementById('fromUser').value;
+            const toUser = document.getElementById('toUser').value;
+            const message = document.getElementById('flightMessage').value;
+            
+            if (!fromUser || !toUser || !message) {
+                alert("Please fill all fields");
+                return;
+            }
+            
+            const cost = type === 1 ? 50 : 100;
+            
+            if (deductFromBalance(cost)) {
+                let processedMessage = type === 1 ? 
+                    brainToLanguageConverter(message) : 
+                    sevenExpressionConverter(message);
+                
+                const flight = {
+                    id: "FL-" + Date.now(),
+                    fromUser: fromUser,
+                    toUser: toUser,
+                    message: processedMessage,
+                    timestamp: new Date(),
+                    isPremium: type === 2
+                };
+                
+                flights.push(flight);
+                logActivity(`Flight scheduled: ${flight.id}`);
+                alert("Flight scheduled successfully!");
+                closeModal('flightModal');
+            }
+        }
+        
+        // MGISCRE functions
+        function postToMgiscre() {
+            const postText = document.getElementById('mgiscrePost').value;
+            
+            if (!postText) {
+                alert("Please enter some content for your post");
+                return;
+            }
+            
+            if (postText.length > 280) {
+                alert("Post is too long! Maximum is 280 characters.");
+                return;
+            }
+            
+            if (deductFromBalance(15)) {
+                const post = {
+                    user: "@You",
+                    content: postText,
+                    timestamp: new Date(),
+                    likes: 0,
+                    retweets: 0,
+                    replies: 0
+                };
+                
+                mgiscrePosts.unshift(post);
+                socialStats.posts++;
+                updateSocialStats();
+                
+                // Add to feed
+                const postElement = createPostElement(post);
+                document.getElementById('mgiscrePosts').prepend(postElement);
+                
+                logActivity("Posted to MGISCRE network");
+                alert("Post shared successfully!");
+                document.getElementById('mgiscrePost').value = "";
+            }
+        }
+        
+        function createPostElement(post) {
+            const div = document.createElement('div');
+            div.className = 'post';
+            div.innerHTML = `
+                <div class="post-header">
+                    <div class="post-avatar">${post.user.charAt(1)}</div>
+                    <div class="post-user">${post.user}</div>
+                    <div class="post-time">just now</div>
+                </div>
+                <div class="post-content">${post.content}</div>
+                <div class="post-actions">
+                    <div class="post-action"><i class="fas fa-heart"></i> ${post.likes}</div>
+                    <div class="post-action"><i class="fas fa-retweet"></i> ${post.retweets}</div>
+                    <div class="post-action"><i class="fas fa-comment"></i> ${post.replies}</div>
+                </div>
+            `;
+            return div;
+        }
+        
+        function joinNetwork() {
+            if (deductFromBalance(100)) {
+                socialStats.connections += 10;
+                updateSocialStats();
+                logActivity("Joined MGISCRE global network");
+                alert("Successfully joined the MGISCRE global network! +10 connections added.");
+            }
+        }
+        
+        function createNode() {
+            if (deductFromBalance(500)) {
+                logActivity("Created new neural network node");
+                alert("Neural network node created! You can now host other users.");
+            }
+        }
+        
+        // Bitcoinayt functions
+        function deductFromBalance(amount) {
+            if (amount <= bitcoinaytBalance) {
+                bitcoinaytBalance -= amount;
+                updateBalanceDisplay();
+                logActivity(`Deducted ${amount}₿ from balance`);
+                return true;
+            } else {
+                alert(`Insufficient balance. You need ${amount}₿ but only have ${bitcoinaytBalance.toFixed(2)}₿`);
+                return false;
+            }
+        }
+        
+        function addToBalance(amount) {
+            bitcoinaytBalance += amount;
+            updateBalanceDisplay();
+            logActivity(`Added ${amount}₿ to balance`);
+        }
+        
+        function updateBalanceDisplay() {
+            document.getElementById('balance').textContent = bitcoinaytBalance.toFixed(2) + "₿";
+        }
+        
+        function updateSocialStats() {
+            document.getElementById('connections').textContent = socialStats.connections;
+            document.getElementById('matches').textContent = socialStats.matches;
+            document.getElementById('posts').textContent = socialStats.posts;
+            document.getElementById('likes').textContent = socialStats.likes;
+        }
+        
+        // Gomadza Brain Language functions (simplified for demo)
+        function brainToLanguageConverter(input) {
+            return "[Neural Processed] " + input.split('').reverse().join('');
+        }
+        
+        function sevenExpressionConverter(input) {
+            return "[7-Expression] " + input.toUpperCase();
+        }
+        
+        // Utility functions
+        function logActivity(activity) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${activity}`;
+            activityLog.push(logEntry);
+            
+            const logEntries = document.getElementById('logEntries');
+            const entryElement = document.createElement('div');
+            entryElement.className = 'log-entry';
+            entryElement.innerHTML = `<i class="fas fa-info-circle"></i> ${logEntry}`;
+            
+            logEntries.appendChild(entryElement);
+            logEntries.scrollTop = logEntries.scrollHeight;
+        }
+        
+        // Initialize the system when page loads
+        window.onload = initSystem;
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modals = document.getElementsByClassName('modal');
+            for (let i = 0; i < modals.length; i++) {
+                if (event.target == modals[i]) {
+                    modals[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+</body>
+  </html>
